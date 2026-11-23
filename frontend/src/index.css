@@ -1,14 +1,99 @@
-* {
-  box-sizing: border-box;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens copiados da Intranet Controladoria (src/index.css de lá). Mantenha
+   iguais aos de lá: na integração este arquivo é descartado e o módulo passa
+   a usar o index.css da Intranet. */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+
+    /* Identidade Ciapetro: marinho #0b2547, noite #020817, azul #2887ff, amarelo #ffd719. */
+    --marca-marinho: 214 73% 16%;
+    --marca-noite: 223 84% 5%;
+    --marca-azul: 214 100% 58%;
+    --marca-amarelo: 50 100% 55%;
+
+    /* Sidebar azul-marinho nos dois temas. */
+    --sidebar-background: 216 70% 14%;
+    --sidebar-foreground: 214 60% 90%;
+    --sidebar-primary: 50 100% 55%;
+    --sidebar-primary-foreground: 216 70% 12%;
+    --sidebar-accent: 215 55% 22%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 215 45% 23%;
+    --sidebar-ring: 214 100% 62%;
+    --sidebar-muted: 214 40% 70%;
+  }
+
+  .dark {
+    --background: 222.2 47.4% 11.2%;
+    --foreground: 210 40% 98%;
+    --card: 217.2 32.6% 17.5%;
+    --card-foreground: 210 40% 98%;
+    --popover: 217.2 32.6% 17.5%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 215.3 25% 26.7%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215.3 25% 26.7%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 215.3 25% 26.7%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215.3 25% 26.7%;
+    --input: 215.4 16.3% 34%;
+    --ring: 215 20.2% 65.1%;
+
+    --sidebar-background: 218 75% 10%;
+    --sidebar-accent: 216 55% 18%;
+    --sidebar-border: 216 45% 18%;
+  }
 }
 
-html,
-body,
-#root {
-  margin: 0;
-  min-height: 100%;
+@layer base {
+  *, ::before, ::after { border-color: hsl(var(--border)); }
 }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+.numeros-tabulares { font-variant-numeric: tabular-nums; }
+
+*, *::before, *::after {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
+
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148,163,184,.4); border-radius: 3px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(148,163,184,.7); }
+.custom-scrollbar::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+
+.tabela-scroll { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.tabela-scroll:hover { scrollbar-color: rgba(148,163,184,.5) transparent; }
+
+html.dark { color-scheme: dark; }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(100,116,139,.5); }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,.8); }
