@@ -1,10 +1,10 @@
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Briefcase, ChevronRight, ClipboardCheck, Home, Moon, PanelLeft, Sun } from 'lucide-react';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Briefcase, ChevronRight, ClipboardCheck, Home, LogOut, Moon, PanelLeft, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useTema } from '@/contexts/TemaContext';
 import { BASE_AUDITORIA_FILIAIS } from '@/components/AuditoriaFiliais/rotas';
-import { USUARIO_TESTE } from './sessaoTeste';
+import { sair, usuarioTeste } from './sessaoTeste';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Moldura SÓ PARA TESTES isolados. Imita o visual da Intranet (menu lateral
@@ -42,7 +42,10 @@ export function LayoutTeste() {
   const [compacto, setCompacto] = useState(false);
   const { tema, toggleTema } = useTema();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const noModulo = pathname.startsWith(BASE_AUDITORIA_FILIAIS);
+  const usuario = usuarioTeste();
+  const fazerLogout = () => { sair(); navigate('/login', { replace: true }); };
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans dark:bg-slate-900">
@@ -87,13 +90,13 @@ export function LayoutTeste() {
             title={tema === 'dark' ? 'Tema claro' : 'Tema escuro'}
           >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[1.5px] border-marca-amarelo/80 bg-sidebar-accent text-xs font-black text-white">
-              {USUARIO_TESTE.nome.split(' ').map(p => p[0]).slice(0, 2).join('')}
+              {usuario.nome.split(' ').map(p => p[0]).slice(0, 2).join('')}
             </span>
             {!compacto && (
               <>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] font-bold leading-tight text-white">{USUARIO_TESTE.nome}</span>
-                  <span className="text-[10px] font-bold text-sidebar-foreground/70">{USUARIO_TESTE.papel}</span>
+                  <span className="block truncate text-[13px] font-bold leading-tight text-white">{usuario.nome}</span>
+                  <span className="text-[10px] font-bold text-sidebar-foreground/70">{usuario.papel}</span>
                 </span>
                 {tema === 'dark' ? <Sun className="h-4 w-4 text-sidebar-foreground/70" /> : <Moon className="h-4 w-4 text-sidebar-foreground/70" />}
               </>
@@ -134,6 +137,15 @@ export function LayoutTeste() {
           <span className="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-400">
             Testes
           </span>
+          <button
+            type="button"
+            onClick={fazerLogout}
+            title="Sair"
+            aria-label="Sair"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-200/70 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+          >
+            <LogOut size={16} />
+          </button>
         </header>
         <main className="custom-scrollbar relative min-h-0 min-w-0 flex-1 overflow-auto">
           <Outlet />

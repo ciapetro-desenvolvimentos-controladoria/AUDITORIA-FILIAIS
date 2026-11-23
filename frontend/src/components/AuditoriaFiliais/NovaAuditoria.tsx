@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ClipboardPlus } from 'lucide-react';
 import { CabecalhoPagina } from '@/components/ui/LayoutPagina';
-import { USUARIO_TESTE } from '@/components/Layout/sessaoTeste';
+import { usuarioTeste } from '@/components/Layout/sessaoTeste';
 import { salvarAuditoria } from './armazenamento';
 import { CLASSE_BOTAO_PRIMARIO, CLASSE_BOTAO_SECUNDARIO, Entrada, Grade, Secao, Selecao } from './componentes';
+import { listarEmpresas, opcoesFiliais, type EmpresaCatalogo } from './empresas';
 import { rotasAuditoria } from './rotas';
 import type { AuditoriaFilial, TipoAuditoria } from './tipos';
 
@@ -13,13 +14,26 @@ const dataIso = (d: Date) =>
 
 export function NovaAuditoria() {
   const navigate = useNavigate();
-  const [filial, setFilial] = useState('');
+  const [empresas, setEmpresas] = useState<EmpresaCatalogo[]>([]);
+  const [empresaId, setEmpresaId] = useState('');
   const [mesReferencia, setMesReferencia] = useState('');
   const [dataAuditoria, setDataAuditoria] = useState('');
   const [periodoInicio, setPeriodoInicio] = useState('');
   const [periodoFim, setPeriodoFim] = useState('');
-  const [auditor, setAuditor] = useState(USUARIO_TESTE.nome);
+  const [auditor, setAuditor] = useState(() => usuarioTeste().nome);
+  const [erroFiliais, setErroFiliais] = useState<string | null>(null);
   const [tipo, setTipo] = useState<TipoAuditoria>('presencial');
+
+  useEffect(() => {
+    let ativo = true;
+    listarEmpresas()
+      .then(lista => { if (ativo) setEmpresas(lista); })
+      .catch((e: unknown) => { if (ativo) setErroFiliais(e instanceof Error ? e.message : 'Erro ao carregar as filiais.'); });
+    return () => { ativo = false; };
+  }, []);
+
+  const filiais = useMemo(() => opcoesFiliais(empresas), [empresas]);
+  const filialEscolhida = filiais.find(f => f.id === empresaId);
 
   // Ao escolher a data da auditoria: período = 6 meses antes até a data, e o
   // mês de referência é o da data (mesma regra da versão anterior).
@@ -27,17 +41,20 @@ export function NovaAuditoria() {
     setDataAuditoria(valor);
     if (!valor) return;
     const [ano, mes, dia] = valor.split('-').map(Number);
-    setPeriodoInicio(dataIso(new Date(ano, mes - 1 - 6, dia)));
-    setPeriodoFim(valor);
+    setPeriodoInicio(dataIso(new Date(ano, mes - 1 - 6, dia - 10)));
+    setPeriodoFim(dataIso(new Date(ano, mes - 1, dia - 10)));
     setMesReferencia(`${ano}-${String(mes).padStart(2, '0')}`);
   };
 
-  const podeCriar = filial.trim() !== '' && dataAuditoria !== '';
+  const podeCriar = !!filialEscolhida && dataAuditoria !== '';
 
   const criar = () => {
+    if (!filialEscolhida) return;
     const nova: AuditoriaFilial = {
       id: crypto.randomUUID(),
-      filial: filial.trim(),
+      filial: filialEscolhida.nome,
+      empresaId: filialEscolhida.id,
+      cnpj: filialEscolhida.cnpj,
       mesReferencia,
       dataAuditoria,
       periodoInicio,
@@ -63,7 +80,13 @@ export function NovaAuditoria() {
       <div className="max-w-3xl space-y-6">
         <Secao numero={1} titulo="Filial e data">
           <Grade colunas={2}>
-            <Entrada rotulo="Filial" placeholder="Ex.: Cianorte" valor={filial} aoMudar={setFilial} />
+            <Selecao
+              rotulo="Filial"
+              valor={empresaId}
+              aoMudar={setEmpresaId}
+              placeholder={erroFiliais ? 'Não foi possível carregar as filiais' : filiais.length ? 'Selecione a filial...' : 'Carregando filiais...'}
+              opcoes={filiais.map(f => ({ valor: f.id, rotulo: f.rotulo }))}
+            />
             <Selecao
               rotulo="Tipo de auditoria"
               valor={tipo}
@@ -74,6 +97,7 @@ export function NovaAuditoria() {
             <Entrada rotulo="Data da auditoria" type="date" valor={dataAuditoria} aoMudar={aoMudarData} />
             <Entrada rotulo="Mês de referência" type="month" valor={mesReferencia} aoMudar={setMesReferencia} />
           </Grade>
+          {erroFiliais && <p role="alert" className="text-sm font-medium text-rose-600 dark:text-rose-400">{erroFiliais}</p>}
         </Secao>
 
         <Secao numero={2} titulo="Período auditado" descricao="Preenchido sozinho com os 6 meses anteriores à data da auditoria; ajuste se precisar.">

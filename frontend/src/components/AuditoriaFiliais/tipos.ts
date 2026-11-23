@@ -2,7 +2,12 @@ export type TipoAuditoria = 'presencial' | 'remota';
 
 export interface AuditoriaFilial {
   id: string;
+  /** Nome da filial para exibição (guardado junto para não depender do catálogo). */
   filial: string;
+  /** Id da empresa no cadastro da Intranet (tabela `empresas`). */
+  empresaId?: string;
+  /** CNPJ da filial, com máscara. */
+  cnpj?: string;
   /** AAAA-MM */
   mesReferencia: string;
   /** AAAA-MM-DD */

@@ -2,7 +2,7 @@ import { useMemo, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CheckCircle2, ClipboardCheck, ClipboardList, Hourglass, Plus } from 'lucide-react';
 import { CabecalhoPagina } from '@/components/ui/LayoutPagina';
-import { USUARIO_TESTE } from '@/components/Layout/sessaoTeste';
+import { usuarioTeste } from '@/components/Layout/sessaoTeste';
 import { listarAuditorias } from './armazenamento';
 import { CLASSE_BOTAO_PRIMARIO, CLASSE_BOTAO_SECUNDARIO } from './componentes';
 import { formatarMesCurto } from './formatacao';
@@ -27,7 +27,7 @@ export function PainelAuditorias() {
   const auditorias = useMemo(() => listarAuditorias(), []);
   const emAndamento = auditorias.filter(a => !auditoriaConcluida(a));
   const concluidas = auditorias.length - emAndamento.length;
-  const primeiroNome = USUARIO_TESTE.nome.split(' ')[0];
+  const primeiroNome = usuarioTeste().nome.split(' ')[0];
 
   return (
     <div className="space-y-6 p-6 font-sans">
