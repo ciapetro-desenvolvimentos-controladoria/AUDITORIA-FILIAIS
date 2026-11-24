@@ -39,3 +39,16 @@ mesmo usuário e senha da Intranet. Para montar o ambiente:
 5. Trocar `armazenamento.ts` (hoje localStorage) por chamadas à API do backend da Intranet.
 6. Em `AuditoriaFiliais/empresas.ts`, trocar o corpo de `listarEmpresas()` por `empresasService.listar()`
    (lista de filiais da tabela `empresas`). `Layout/empresasTeste.ts` é só de teste e é descartado.
+7. PT03 (amostragem dos canhotos): a população de notas de venda vem do Sispetro, que só é alcançável
+   pelo servidor interno. Nos testes, o `npm run dev` roda `scripts-dev/sispetro-populacao-pt03.ps1`
+   (rota `/sispetro-teste/pt03-populacao` no `vite.config.ts`). Na Intranet, essa consulta vira um
+   coletor com fila (padrão de `coletor-sispetro/`) e `AuditoriaFiliais/sispetro.ts` passa a pedir a ele.
+8. PT08 (compras de pedágio): os vales já estão no banco da Intranet (schema `pedagios`, módulo de Pedágios).
+   Nos testes, o `npm run dev` roda `scripts-dev/pedagios-compras-pt08.sql` com o psql no banco de teste
+   (rota `/intranet-teste/pt08-compras`). Na Intranet, criar uma rota da API com essa consulta e trocar
+   `buscarComprasPedagio` em `AuditoriaFiliais/pedagios.ts`. O código da empresa no Sispetro sai do CNPJ
+   (`codigoEmpresaSispetro` em `empresas.ts`).
+
+Variáveis do `npm run dev` (servidor compartilhado, cada pessoa nas suas portas): `PORTA_DEV` (padrão 5173),
+`BACKEND_URL` (padrão `http://localhost:3001`), `PG_BIN` (pasta do psql) e `INTRANET_DIR` (padrão: pasta
+irmã `INTRANET-CONTROLADORIA`).

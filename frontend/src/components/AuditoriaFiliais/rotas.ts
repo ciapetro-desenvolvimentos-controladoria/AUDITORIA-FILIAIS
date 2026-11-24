@@ -7,5 +7,6 @@ export const rotasAuditoria = {
   lista: () => `${BASE_AUDITORIA_FILIAIS}/auditorias`,
   nova: () => `${BASE_AUDITORIA_FILIAIS}/auditorias/nova`,
   detalhe: (id: string) => `${BASE_AUDITORIA_FILIAIS}/auditorias/${id}`,
+  editar: (id: string) => `${BASE_AUDITORIA_FILIAIS}/auditorias/${id}/editar`,
   papel: (id: string, numero: number) => `${BASE_AUDITORIA_FILIAIS}/auditorias/${id}/pt/${String(numero).padStart(2, '0')}`,
 };

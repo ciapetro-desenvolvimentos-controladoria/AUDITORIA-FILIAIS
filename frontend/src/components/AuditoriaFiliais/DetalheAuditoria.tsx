@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ChevronRight, ClipboardCheck } from 'lucide-react';
+import { ArrowLeft, ChevronRight, ClipboardCheck, Pencil } from 'lucide-react';
 import { CabecalhoPagina } from '@/components/ui/LayoutPagina';
 import { obterAuditoria, situacaoPapel } from './armazenamento';
 import { CLASSE_BOTAO_SECUNDARIO, SeloSituacaoPapel } from './componentes';
@@ -42,7 +42,12 @@ export function DetalheAuditoria() {
         subtitulo={formatarMes(auditoria.mesReferencia)}
         setor="controladoria"
         selos={<SeloAuditoria auditoria={auditoria} />}
-        acoes={<Link to={rotasAuditoria.lista()} className={CLASSE_BOTAO_SECUNDARIO}><ArrowLeft size={15} /> Auditorias</Link>}
+        acoes={(
+          <>
+            <Link to={rotasAuditoria.lista()} className={CLASSE_BOTAO_SECUNDARIO}><ArrowLeft size={15} /> Auditorias</Link>
+            <Link to={rotasAuditoria.editar(auditoria.id)} className={CLASSE_BOTAO_SECUNDARIO}><Pencil size={15} /> Editar dados</Link>
+          </>
+        )}
       >
         <div className="grid grid-cols-2 gap-4 py-1.5 sm:grid-cols-3 lg:grid-cols-6">
           <Info rotulo="Filial">{auditoria.filial}</Info>

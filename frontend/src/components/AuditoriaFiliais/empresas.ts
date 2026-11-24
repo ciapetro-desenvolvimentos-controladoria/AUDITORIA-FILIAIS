@@ -41,6 +41,21 @@ export function numeroOrdemCnpj(cnpj: string): number {
   return Number(cnpj.replace(/\D/g, '').slice(8, 12)) || 0;
 }
 
+/** Raiz do CNPJ da Ciapetro: só nela o número da filial no CNPJ é o código da empresa no Sispetro. */
+const RAIZ_CNPJ_CIAPETRO = '01466091';
+/** Exceções conferidas no Sispetro (dba.empresas, 24/11/2026): número no CNPJ -> código no Sispetro. */
+const EXCECOES_CODIGO_SISPETRO: Record<number, number> = { 4: 2 /* Araucária */, 5: 3 /* Paulínia */ };
+
+/** Código da empresa no Sispetro a partir do CNPJ: na Ciapetro é o número da filial no CNPJ
+ * (0001 = empresa 1, Cianorte), menos Araucária (0004 = empresa 2) e Paulínia (0005 = empresa 3).
+ * Fora da raiz da Ciapetro a regra não vale: devolve null. */
+export function codigoEmpresaSispetro(cnpj: string | undefined): number | null {
+  const d = (cnpj ?? '').replace(/\D/g, '');
+  if (d.length !== 14 || !d.startsWith(RAIZ_CNPJ_CIAPETRO)) return null;
+  const ordem = numeroOrdemCnpj(d);
+  return EXCECOES_CODIGO_SISPETRO[ordem] ?? ordem;
+}
+
 /** CNPJ com máscara 00.000.000/0000-00. */
 export function formatarCnpj(cnpj: string | undefined): string {
   if (!cnpj) return '(vazio)';
